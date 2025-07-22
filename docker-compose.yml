@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  math-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: math-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./math.db:/app/math.db
+    restart: always
