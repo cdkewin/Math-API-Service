@@ -26,5 +26,6 @@ then visit http://localhost:8000/docs
 
 To run the app from docker: docker run -p 8000:8000 -v ${PWD}\math.db:/app/math.db math-api
 then visit http://localhost:8000/docs
-3) see logs: sqlite-utils rows math.db request_log
-4) run tests: pytest
+3) stop app: ctrl+C
+4) see logs: sqlite-utils rows math.db request_log
+5)  run tests: pytest

@@ -2,17 +2,17 @@ from fastapi import FastAPI
 from fastapi import Request
 from app import database, schemas, logic, cache, workers
 from app.logging_config import setup_logging
-
+from pydantic import BaseModel, Field
+import asyncio
 
 app = FastAPI()
 
 database.init_db()
 cache.init_cache()
 
-
 @app.on_event("startup")
 async def startup_event():
-    workers.init_worker()
+    await workers.init_worker()
 
 
 @app.post("/pow")

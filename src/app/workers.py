@@ -1,11 +1,17 @@
 import asyncio
 from app.logic import fibonacci
 
-queue = asyncio.Queue()
+queue = None
+worker_started = False
 
 
-def init_worker():
-    asyncio.create_task(worker_loop())
+async def init_worker():
+    global queue, worker_started
+    if queue is None:
+        queue = asyncio.Queue()
+    if not worker_started:
+        asyncio.create_task(worker_loop())
+        worker_started = True
 
 
 async def worker_loop():
@@ -16,7 +22,9 @@ async def worker_loop():
 
 
 async def fib_worker(n: int) -> int:
-    loop = asyncio.get_event_loop()
-    future = loop.create_future()
+    global queue, worker_started
+    if queue is None or not worker_started:
+        await init_worker()
+    future = asyncio.get_event_loop().create_future()
     await queue.put((n, future))
     return await future

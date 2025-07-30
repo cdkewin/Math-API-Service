@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from app.main import app
+from app import workers
 
 client = TestClient(app)
 
@@ -14,6 +15,7 @@ def test_fib():
     response = client.post("/fib", json={"number": 10})
     assert response.status_code == 200
     assert response.json()["result"] == 55  # 10th Fibonacci number
+    print("Got response:", response)
 
 
 def test_factorial():
