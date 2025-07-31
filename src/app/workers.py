@@ -2,16 +2,13 @@ import asyncio
 from app.logic import fibonacci
 
 queue = None
-worker_started = False
 
 
 async def init_worker():
-    global queue, worker_started
+    global queue
     if queue is None:
         queue = asyncio.Queue()
-    if not worker_started:
         asyncio.create_task(worker_loop())
-        worker_started = True
 
 
 async def worker_loop():
