@@ -1,5 +1,5 @@
+#Script for data validation using Pydantic models
 from pydantic import BaseModel, Field
-
 
 class PowerRequest(BaseModel):
     base: float = Field(..., example=2)
