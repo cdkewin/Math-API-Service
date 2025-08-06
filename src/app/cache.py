@@ -1,9 +1,9 @@
-cache_store = {"fib": {}}
+cache_store = {"fib": {}, "pow": {}, "factorial": {}}
 
 
 def init_cache():
     global cache_store
-    cache_store = {"fib": {}}
+    cache_store = {"fib": {}, "pow": {}, "factorial": {}}
 
 
 def check_cache(operation: str, key: int):

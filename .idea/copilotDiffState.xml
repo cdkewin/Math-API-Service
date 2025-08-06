@@ -3,6 +3,15 @@
   <component name="CopilotDiffPersistence">
     <option name="pendingDiffs">
       <map>
+        <entry key="$PROJECT_DIR$/src/app/cache.py">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/app/cache.py" />
+              <option name="originalContent" value="cache_store = {&quot;fib&quot;: {}}&#10;&#10;&#10;def init_cache():&#10;    global cache_store&#10;    cache_store = {&quot;fib&quot;: {}}&#10;&#10;&#10;def check_cache(operation: str, key: int):&#10;    return cache_store.get(operation, {}).get(key)&#10;&#10;&#10;def set_cache(operation: str, key: int, value):&#10;    if operation not in cache_store:&#10;        cache_store[operation] = {}&#10;    cache_store[operation][key] = value&#10;" />
+              <option name="updatedContent" value="cache_store = {&quot;fib&quot;: {}, &quot;pow&quot;: {}, &quot;factorial&quot;: {}}&#10;&#10;&#10;def init_cache():&#10;    global cache_store&#10;    cache_store = {&quot;fib&quot;: {}, &quot;pow&quot;: {}, &quot;factorial&quot;: {}}&#10;&#10;&#10;def check_cache(operation: str, key: int):&#10;    return cache_store.get(operation, {}).get(key)&#10;&#10;&#10;def set_cache(operation: str, key: int, value):&#10;    if operation not in cache_store:&#10;        cache_store[operation] = {}&#10;    cache_store[operation][key] = value" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/app/main.py">
           <value>
             <PendingDiffInfo>

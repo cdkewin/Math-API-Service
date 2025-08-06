@@ -58,3 +58,7 @@ async def log_requests(request: Request, call_next):
     response = await call_next(request)
     print(f"Response status: {response.status_code}")
     return response
+@app.get("/cache")
+def get_cache():
+    from app import cache
+    return cache.cache_store
