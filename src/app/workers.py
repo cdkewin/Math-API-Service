@@ -20,7 +20,7 @@ async def worker_loop():
 
 async def fib_worker(n: int) -> int:
     global queue
-    if queue is None :
+    if queue is None:
         await init_worker()
     future = asyncio.get_event_loop().create_future()
     await queue.put((n, future))

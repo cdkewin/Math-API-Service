@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Math API Client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 350px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .card {
+            background: #f9f9f9;
+            border-radius: 16px;
+            padding: 2em 2em 1.5em 2em;
+            margin-bottom: 2em;
+            box-shadow: 0 4px 24px #90caf9;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input, button {
+            margin: 0.5em;
+            padding: 0.75em;
+            border-radius: 8px;
+            border: 1px solid #90caf9;
+            font-size: 1em;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        .result {
+            margin-top: 0.5em;
+            font-weight: bold;
+            color: #1976d2;
+            font-size: 1.1em;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #1976d2;
+        }
+        .tab-btns {
+            display: flex;
+            width: 100%;
+            margin-bottom: 1em;
+        }
+        .tab-btns button {
+            flex: 1;
+            border-radius: 8px 8px 0 0;
+            margin: 0;
+            border-bottom: 2px solid #1976d2;
+        }
+        .tab-btns button:not(:last-child) {
+            border-right: 1px solid #90caf9;
+        }
+        .tab-btns button.active {
+            background: #1976d2;
+            color: white;
+        }
+        .error {
+            color: #d32f2f;
+            margin-top: 0.5em;
+        }
+        .success {
+            color: #388e3c;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const apiUrl = "http://127.0.0.1:8080";
+
+        function SignIn({ onLogin }) {
+            const [username, setUsername] = React.useState("");
+            const [password, setPassword] = React.useState("");
+            const [error, setError] = React.useState("");
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setError("");
+                try {
+                    const res = await fetch(`${apiUrl}/login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+                    if (!res.ok) throw new Error("Invalid credentials");
+                    const data = await res.json();
+                    if (data.token) {
+                        onLogin(data.token);
+                    } else {
+                        setError("Login failed");
+                    }
+                } catch (err) {
+                    setError(err.message);
+                }
+            };
+
+            return (
+                <div className="card">
+                    <h2>Sign In</h2>
+                    <form onSubmit={handleSubmit}>
+                        <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+                        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+                        <button type="submit">Sign In</button>
+                    </form>
+                    {error && <div style={{color: 'red'}}>{error}</div>}
+                </div>
+            );
+        }
+
+        function MathApp({ token, onLogout }) {
+            const [powBase, setPowBase] = React.useState("");
+            const [powExponent, setPowExponent] = React.useState("");
+            const [powResult, setPowResult] = React.useState("");
+            const [factNumber, setFactNumber] = React.useState("");
+            const [factResult, setFactResult] = React.useState("");
+            const [fibNumber, setFibNumber] = React.useState("");
+            const [fibResult, setFibResult] = React.useState("");
+
+            const calculatePow = async () => {
+                setPowResult("Calculating...");
+                const res = await fetch(`${apiUrl}/pow`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                    body: JSON.stringify({ base: Number(powBase), exponent: Number(powExponent) })
+                });
+                const data = await res.json();
+                setPowResult(data.result);
+            };
+
+            const calculateFact = async () => {
+                setFactResult("Calculating...");
+                const res = await fetch(`${apiUrl}/factorial`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                    body: JSON.stringify({ number: Number(factNumber) })
+                });
+                const data = await res.json();
+                setFactResult(data.result);
+            };
+
+            const calculateFib = async () => {
+                setFibResult("Calculating...");
+                const res = await fetch(`${apiUrl}/fib`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                    body: JSON.stringify({ number: Number(fibNumber) })
+                });
+                const data = await res.json();
+                setFibResult(data.result);
+            };
+
+            return (
+                <div className="container">
+                    <button style={{alignSelf: 'flex-end', marginBottom: '1em', background: '#d32f2f'}} onClick={onLogout}>Log Out</button>
+                    <h1>Math Operations</h1>
+                    <div className="card">
+                        <h2>Power</h2>
+                        <input type="number" placeholder="Base" value={powBase} onChange={e => setPowBase(e.target.value)} />
+                        <input type="number" placeholder="Exponent" value={powExponent} onChange={e => setPowExponent(e.target.value)} />
+                        <button onClick={calculatePow}>Calculate Power</button>
+                        <div className="result">{powResult}</div>
+                    </div>
+                    <div className="card">
+                        <h2>Factorial</h2>
+                        <input type="number" placeholder="Number" value={factNumber} onChange={e => setFactNumber(e.target.value)} />
+                        <button onClick={calculateFact}>Calculate Factorial</button>
+                        <div className="result">{factResult}</div>
+                    </div>
+                    <div className="card">
+                        <h2>Fibonacci</h2>
+                        <input type="number" placeholder="Number" value={fibNumber} onChange={e => setFibNumber(e.target.value)} />
+                        <button onClick={calculateFib}>Calculate Fibonacci</button>
+                        <div className="result">{fibResult}</div>
+                    </div>
+                </div>
+            );
+        }
+
+        function AuthPage({ onLogin }) {
+            const [tab, setTab] = React.useState("login");
+            // Login state
+            const [username, setUsername] = React.useState("");
+            const [password, setPassword] = React.useState("");
+            const [error, setError] = React.useState("");
+            // Register state
+            const [regUsername, setRegUsername] = React.useState("");
+            const [regPassword, setRegPassword] = React.useState("");
+            const [regError, setRegError] = React.useState("");
+            const [regSuccess, setRegSuccess] = React.useState("");
+
+            const handleLogin = async (e) => {
+                e.preventDefault();
+                setError("");
+                try {
+                    const res = await fetch(`${apiUrl}/login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+                    if (!res.ok) throw new Error("Invalid credentials");
+                    const data = await res.json();
+                    if (data.token) {
+                        onLogin(data.token);
+                    } else {
+                        setError("Login failed");
+                    }
+                } catch (err) {
+                    setError(err.message);
+                }
+            };
+
+            const handleRegister = async (e) => {
+                e.preventDefault();
+                setRegError("");
+                setRegSuccess("");
+                try {
+                    const res = await fetch(`${apiUrl}/register`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username: regUsername, password: regPassword })
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.detail || "Registration failed");
+                    setRegSuccess("Account created! You can now sign in.");
+                } catch (err) {
+                    setRegError(err.message);
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="card">
+                        <div className="tab-btns">
+                            <button className={tab === "login" ? "active" : ""} onClick={() => setTab("login")}>Sign In</button>
+                            <button className={tab === "register" ? "active" : ""} onClick={() => setTab("register")}>Create Account</button>
+                        </div>
+                        {tab === "login" ? (
+                            <form onSubmit={handleLogin} style={{width: '100%'}}>
+                                <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+                                <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+                                <button type="submit">Sign In</button>
+                                {error && <div className="error">{error}</div>}
+                            </form>
+                        ) : (
+                            <form onSubmit={handleRegister} style={{width: '100%'}}>
+                                <input type="text" placeholder="Username" value={regUsername} onChange={e => setRegUsername(e.target.value)} required />
+                                <input type="password" placeholder="Password" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
+                                <button type="submit">Create Account</button>
+                                {regError && <div className="error">{regError}</div>}
+                                {regSuccess && <div className="success">{regSuccess}</div>}
+                            </form>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [token, setToken] = React.useState(null);
+            const handleLogout = () => setToken(null);
+            if (!token) {
+                return <AuthPage onLogin={setToken} />;
+            }
+            return <MathApp token={token} onLogout={handleLogout} />;
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+</html>
