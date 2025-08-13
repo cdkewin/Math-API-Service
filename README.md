@@ -20,10 +20,10 @@ Requirements:
 
 How to run:
 1) pip install -r requirements.txt
-2)To run the app locally: uvicorn app.main:app --reload --app-dir src
-then visit http://localhost:8000/docs
-To run the app from docker: docker run -p 8000:8000 -v ${PWD}\math.db:/app/math.db math-api
-then visit http://localhost:8000/docs
+2)To run the app locally: uvicorn app.main:app --reload --app-dir src --host 127.0.0.1 --port 8080   
+then visit "WebPage.html" from the project directory or http://localhost:8080/docs
+To run the app from docker: docker-compose up --build
+then visit http://localhost:8080/docs
 3) stop app: ctrl+C
 4) see logs: sqlite-utils rows math.db request_log
 5) run tests: pytest -v
